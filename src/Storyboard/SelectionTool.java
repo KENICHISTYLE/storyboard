@@ -10,8 +10,9 @@ import fr.lri.swingstates.sm.transitions.* ;
 import java.awt.geom.Point2D ;
 
 /**
- * @author Nicolas Roussel (roussel@lri.fr)
- *
+ * 
+ * @author amghar
+ * select any object in the canvas and move it, (state machine)
  */
 public class SelectionTool extends CStateMachine {
     
@@ -24,20 +25,27 @@ public class SelectionTool extends CStateMachine {
     public SelectionTool() {
 	   this(BUTTON1,NOMODIFIER) ;
     }
-			
-    public SelectionTool(final int button, final int modifier) {
+	
+    /**
+     * 
+     * @param button mouse button
+     * @param modifier modifier
+     */
+    public SelectionTool(final int button, final int modifier ) {
 	   movableTag = new CExtensionalTag() {} ;
 
 	   start = new State() {
-			 Transition move = new PressOnTag(movableTag, button, modifier, ">> move") {
+			 Transition move = new PressOnTag(movableTag,button, modifier, ">> move") {
 				    public void action() {
 					   pPrevious = getPoint() ;
-					   moved = getShape() ;
+					   moved = getShape();
+					   moved.aboveAll();
 					   consumes(true) ;
 				    }
 				} ;
 		  } ;
-    
+       
+		  
 	   move = new State() {
 			 Transition drag = new Drag(button, modifier) {
 				    public void action() {
@@ -53,7 +61,10 @@ public class SelectionTool extends CStateMachine {
 		  } ;
 
     }
-
+    /**
+     * 
+     * @return the tag we need to move objects in the canvas
+     */
     public CExtensionalTag getMovableTag() {
 	   return movableTag ;
     }

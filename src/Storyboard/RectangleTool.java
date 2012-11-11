@@ -10,8 +10,9 @@ import fr.lri.swingstates.sm.transitions.* ;
 import java.awt.geom.Point2D ;
 
 /**
- * @author Nicolas Roussel (roussel@lri.fr)
- *
+ * 
+ * @author amghar
+ * drawing rectangle tool (state machine)
  */
 public class RectangleTool extends CStateMachine {
 
@@ -23,7 +24,11 @@ public class RectangleTool extends CStateMachine {
     public RectangleTool() {
 	   this(BUTTON1,NOMODIFIER) ;
     }
-
+ /**
+  * 
+  * @param button mouse button
+  * @param modifier 
+  */
     public RectangleTool(final int button, final int modifier) {
 	   start = new State() {
 			 Transition press = new Press(button, modifier, ">> draw") {

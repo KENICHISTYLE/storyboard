@@ -2,10 +2,10 @@ package Storyboard;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.ActionListener;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
@@ -16,20 +16,23 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import fr.lri.swingstates.canvas.CElement;
 import fr.lri.swingstates.canvas.CExtensionalTag;
-import fr.lri.swingstates.canvas.CStateMachine;
-import fr.lri.swingstates.sm.State;
-import fr.lri.swingstates.sm.Transition;
-import fr.lri.swingstates.sm.transitions.Drag;
-import fr.lri.swingstates.sm.transitions.Release;
-
+import fr.lri.swingstates.canvas.CImage;
+import fr.lri.swingstates.canvas.CRectangle;
+import fr.lri.swingstates.canvas.Canvas;
+/**
+ * 
+ * @author amghar
+ * drag image from preview to canvas
+ */
 public class Dragdrop  {
 	
 	    private Point2D pPrevious ;
 	    private JFrame f ;
 	    private JLabel label;
 	    private JPanel icon;
+	    private CImage img;
+	    private Canvas canva;
 	    //private Dialog d = new Dialog();
 	    
 	    public Dragdrop (){
@@ -42,8 +45,15 @@ public class Dragdrop  {
 	    	f.pack() ;
 	 	   	f.setVisible(true) ;
 	    }
-	    	
-	    public Dragdrop ( ImageIcon i,Point p,int width , int height){
+	    	/**
+	    	 * 
+	    	 * @param i the image to drag
+	    	 * @param c the canvas where to display
+	    	 * @param p the point where the cursor is at the grab time
+	    	 * @param width of the dragging box
+	    	 * @param height of the dragging box
+	    	 */
+	    public Dragdrop ( ImageIcon i,Canvas c,Point p,int width , int height){
 	    	f = new JFrame();
 	    	f.setUndecorated(true);
 	    	f.setLocation(p);
@@ -52,7 +62,8 @@ public class Dragdrop  {
 	    	Container pane;
 	    	pane = f.getContentPane();
 	    	
-	    	this.label = new JLabel(i);
+	    	this.label = new JLabel(i);	    	
+	    	this.canva = c;
 	    	
 	    	icon = new JPanel();
 	    	icon.setLayout(new BoxLayout(icon, BoxLayout.X_AXIS));
@@ -63,21 +74,50 @@ public class Dragdrop  {
 	    	icon.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 2));
 	    	icon.add(label);
 	    		    	
+	    		
 	    	icon.add(label);
 	    	pane.add(icon);
 	    	f.pack() ;
 	    }
-	    
-	    public void onDrag (BufferedImage p, Point l) {	
+	    /**
+	     * 
+	     * @param p image to drag
+	     * @param l the position of the mouse
+	     */
+	    public void onDrag (Image p, Point l) {	
 	    	label.setIcon(new ImageIcon(p));
 	    	f.setLocation(l);
 	    	f.setVisible(true);
+	    	
 	    }
 	    public void onMove (Point p){
 	        f.setLocation(p);	
 	    }
-	    public void onDrop (){
+	    /**
+	     * 
+	     * @param path the path of the image to draw
+	     * @param tag allow to move the image
+	     * @param x position to put the image
+	     * @param y same as x
+	     */
+	    public void onDrop (String path,CExtensionalTag tag,double x, double y){
 	    	f.setVisible(false);
+	    	img = canva.newImage(0, 0, path);
+	    	double w = img.getWidth();
+	    	double h = img.getHeight();	   
+	    	
+	    	img.translateTo(x, y);	       
+	    	
+	    	if(w > 200 && w <1000)img.scaleBy(200/w);
+	        if(h > 200 && h <1000)img.scaleBy(200/h);
+	        if(w >=1000 && w < 2000)img.scaleBy(400/w);
+	        if(h >=1000 && h < 2000)img.scaleBy(400/h);
+	        if(w >=2000)img.scaleBy(900/w);
+	        if(h >=2000)img.scaleBy(900/h);
+	        //  no need to scale cause we have a scale tool     
+	        //s.getShape().addTag(tag);
+	        img.addTag(tag);
+	        
 	    }
 	    public void close(){
 	    	f.dispose();
